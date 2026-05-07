@@ -7,19 +7,18 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <link rel="manifest" href="manifest.json">
     <link rel="icon" type="image/png" href="icon.png">
-    <meta name="theme-color" content="#10b981">
+    <meta name="theme-color" content="#d97706">
     <title>Frankie's Magic Lamp</title>
     <script src="https://www.puck-js.com/puck.js"></script>
     <style>
         :root {
-            --bg-overlay: rgba(15, 23, 42, 0.75);
-            --glass: rgba(255, 255, 255, 0.08);
-            --glass-border: rgba(255, 255, 255, 0.15);
-            --text: #f8fafc;
-            --accent: #10b981;
-            --warn: #ef4444;
-            --battery: #38bdf8;
-            --status-blue: #3b82f6;
+            --bg-overlay: rgba(28, 25, 23, 0.85); /* Deep charcoal/brown overlay */
+            --glass: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(217, 119, 6, 0.2); /* Subtle gold border */
+            --text: #fef3c7; /* Warm cream text */
+            --accent: #f59e0b; /* Gold accent */
+            --cork: #a8a29e; /* Muted cork/stone colour */
+            --glow: #fde68a; /* Warm fairy light glow */
         }
         
         body {
@@ -30,7 +29,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            /* Use your jar image as the fixed background */
+            /* Background uses your jar image [cite: 332] */
             background: linear-gradient(var(--bg-overlay), var(--bg-overlay)), 
                         url('icon.png') no-repeat center center fixed;
             background-size: cover;
@@ -40,21 +39,20 @@
         .container {
             width: 90%;
             max-width: 380px;
-            /* Frosted glass effect */
             background: var(--glass);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            padding: 28px;
-            border-radius: 30px;
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            padding: 30px;
+            border-radius: 35px;
             border: 1px solid var(--glass-border);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
         }
 
         .status-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 30px;
+            margin-bottom: 35px;
         }
 
         .info-row {
@@ -62,104 +60,102 @@
             align-items: center;
             gap: 12px;
             font-size: 0.85rem;
-            color: var(--battery);
-            letter-spacing: 0.5px;
+            color: var(--accent);
+            opacity: 0.8;
+            font-weight: 600;
         }
 
         .led {
             width: 10px;
             height: 10px;
             border-radius: 50%;
-            background: rgba(255,255,255,0.2);
+            background: rgba(255, 255, 255, 0.1);
             transition: all 0.3s ease;
         }
-        /* Pulse glow for the Blue LED status */
+        /* Status follower now uses a warm white/gold glow  */
         .led.active { 
-            background: var(--status-blue); 
-            box-shadow: 0 0 15px var(--status-blue), 0 0 5px white; 
+            background: var(--glow); 
+            box-shadow: 0 0 15px var(--glow), 0 0 5px white; 
         }
 
-        h1 { font-size: 1.2rem; font-weight: 300; margin: 0; opacity: 0.9; }
+        h1 { font-size: 1.25rem; font-weight: 300; margin: 0; letter-spacing: 1px; }
 
         .btn {
             width: 100%;
-            padding: 16px;
-            margin: 10px 0;
+            padding: 18px;
+            margin: 12px 0;
             border: none;
-            border-radius: 15px;
-            font-size: 0.95rem;
+            border-radius: 18px;
+            font-size: 1rem;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s ease;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 1.5px;
         }
 
-        .btn:active { transform: scale(0.96); opacity: 0.8; }
+        .btn:active { transform: scale(0.97); }
 
         .btn-connect { 
             background: var(--accent); 
-            color: #064e3b; 
-            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+            color: #451a03; 
+            box-shadow: 0 4px 20px rgba(217, 119, 6, 0.4);
         }
 
         .btn-off { 
-            background: rgba(239, 68, 68, 0.1); 
-            color: var(--warn); 
-            border: 1px solid var(--warn);
-            margin-top: 20px;
+            background: transparent; 
+            color: var(--cork); 
+            border: 1px solid var(--cork);
+            margin-top: 25px;
+            font-size: 0.85rem;
+            opacity: 0.7;
         }
+        .btn-off:hover { background: rgba(168, 162, 158, 0.1); opacity: 1; }
 
         .control-panel {
-            background: rgba(0, 0, 0, 0.2);
-            padding: 20px;
-            border-radius: 20px;
-            margin-top: 10px;
+            background: rgba(0, 0, 0, 0.25);
+            padding: 22px;
+            border-radius: 25px;
+            margin-top: 15px;
         }
 
         .label-row { 
             display: flex; 
             justify-content: space-between; 
-            font-size: 0.75rem; 
-            color: #94a3b8; 
-            margin-bottom: 8px;
-            text-transform: uppercase;
+            font-size: 0.7rem; 
+            color: var(--cork); 
+            margin-bottom: 10px;
+            letter-spacing: 1px;
         }
 
         select.mode-select {
-            background: rgba(255,255,255,0.1);
-            color: white;
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text);
             border: 1px solid var(--glass-border);
             width: 100%;
-            padding: 12px;
-            border-radius: 12px;
-            margin-bottom: 20px;
+            padding: 14px;
+            border-radius: 14px;
+            margin-bottom: 25px;
             outline: none;
+            appearance: none;
         }
 
-        /* Custom Slider Styling */
-        input[type=range] {
-            -webkit-appearance: none;
-            width: 100%;
-            background: transparent;
-        }
-
+        input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; }
         input[type=range]::-webkit-slider-runnable-track {
             width: 100%;
-            height: 6px;
-            background: rgba(255,255,255,0.1);
-            border-radius: 3px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
         }
-
         input[type=range]::-webkit-slider-thumb {
             -webkit-appearance: none;
-            height: 20px;
-            width: 20px;
+            height: 22px;
+            width: 22px;
             border-radius: 50%;
-            background: var(--status-blue);
+            background: var(--accent);
             cursor: pointer;
-            margin-top: -7px;
-            box-shadow: 0 0 10px var(--status-blue);
+            margin-top: -9px;
+            box-shadow: 0 0 15px rgba(245, 158, 11, 0.5);
         }
     </style>
 </head>
@@ -178,7 +174,7 @@
     
     <div id="controls" style="display:none;">
         <div class="control-panel">
-            <div class="label-row"><span>Mode</span></div>
+            <div class="label-row"><span>Lighting Mode</span></div>
             <select id="mode-select" class="mode-select" onchange="updateMode()">
                 <option value="flash">✨ Flashing</option>
                 <option value="on">🕯️ Always On</option>
@@ -187,13 +183,13 @@
             <div id="freq-container">
                 <div class="label-row">
                     <span>Frequency</span>
-                    <span style="color: var(--status-blue)"><span id="hz-disp">1.0</span> Hz</span>
+                    <span style="color: var(--accent)"><span id="hz-disp">1.0</span> Hz</span>
                 </div>
                 <input type="range" id="freq" min="0.2" max="10" step="0.1" value="1.0" oninput="updateFreq(this.value)">
             </div>
         </div>
 
-        <button class="btn btn-off" onclick="send('powerOff()')">Master Sleep</button>
+        <button class="btn btn-off" onclick="send('powerOff()')">turn off</button>
     </div>
 </div>
 
