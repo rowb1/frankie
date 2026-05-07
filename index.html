@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>Puck.js Pro Controller</title>
+    <script src="https://www.puck-js.com/puck.js"></script>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card: #1e293b;
+            --text: #f8fafc;
+            --accent: #10b981;
+            --warn: #ef4444;
+            --battery: #38bdf8;
+            --status-blue: #3b82f6;
+        }
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            margin: 0;
+            min-height: 100vh;
+        }
+        .container {
+            width: 100%;
+            max-width: 400px;
+            background: var(--card);
+            padding: 24px;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        }
+        .status-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .info-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 0.9rem;
+            color: var(--battery);
+            font-weight: 600;
+        }
+        .led {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #475569;
+        }
+        .led.active { background: var(--status-blue); box-shadow: 0 0 12px var(--status-blue); }
+        h1 { font-size: 1.1rem; margin: 0; opacity: 0.8; }
+        .btn {
+            width: 100%;
+            padding: 18px;
+            margin: 8px 0;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.1s;
+            touch-action: manipulation;
+        }
+        .btn:active { transform: scale(0.98); }
+        .btn-connect { background: var(--accent); color: #064e3b; }
+        .btn-off { background: #334155; color: var(--warn); border: 2px solid var(--warn); margin-top: 15px; }
+        .slider-box {
+            margin-top: 20px;
+            padding: 16px;
+            background: rgba(15, 23, 42, 0.5);
+            border-radius: 12px;
+        }
+        .mode-select {
+            background: #334155;
+            color: white;
+            border: 1px solid #475569;
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+        input[type=range] { width: 100%; margin: 15px 0; accent-color: var(--status-blue); }
+        .label-row { display: flex; justify-content: space-between; font-size: 0.85rem; color: #94a3b8; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="status-header">
+        <h1>Frankie's magic lamp</h1>
+        <div class="info-row">
+            <span id="batt-lvl">--%</span>
+            <div id="led-indicator" class="led"></div>
+        </div>
+    </div>
+    
+    <button id="conn-btn" class="btn btn-connect" onclick="connect()">Connect Lamp</button>
+    
+    <div id="controls" style="display:none;">
+        <div class="slider-box">
+            <div class="label-row"><span>Operation Mode</span></div>
+            <select id="mode-select" class="mode-select" onchange="updateMode()">
+                <option value="flash">Flashing Mode</option>
+                <option value="on">Always On</option>
+            </select>
+        </div>
+
+        <div id="freq-container" class="slider-box">
+            <div class="label-row">
+                <span>Frequency</span>
+                <span><span id="hz-disp">1.0</span> Hz</span>
+            </div>
+            <input type="range" id="freq" min="0.2" max="10" step="0.1" value="1.0" oninput="updateFreq(this.value)">
+        </div>
+
+        <button class="btn btn-off" onclick="send('powerOff()')">Master Power OFF</button>
+    </div>
+</div>
+
+<script>
+    let bt = null;
+    const led = document.getElementById('led-indicator');
+
+    function connect() {
+        Puck.connect(c => {
+            if (!c) return;
+            bt = c;
+            led.classList.add('active');
+            document.getElementById('conn-btn').style.display = 'none';
+            document.getElementById('controls').style.display = 'block';
+            updateBattery();
+            setInterval(updateBattery, 60000); 
+        });
+    }
+
+    function send(cmd) {
+        if (bt) bt.write(cmd + ";\n");
+    }
+
+    function updateBattery() {
+        if (!bt) return;
+        Puck.eval('Puck.getBatteryPercentage()', (percent) => {
+            if (percent !== null) {
+                document.getElementById('batt-lvl').innerText = percent + "%";
+            }
+        });
+    }
+
+    function updateMode() {
+        const mode = document.getElementById('mode-select').value;
+        const freqContainer = document.getElementById('freq-container');
+        if (mode === 'on') {
+            freqContainer.style.opacity = "0.3";
+            freqContainer.style.pointerEvents = "none";
+            send('allOn()');
+        } else {
+            freqContainer.style.opacity = "1";
+            freqContainer.style.pointerEvents = "auto";
+            const hz = document.getElementById('freq').value;
+            send(`start(${hz})`);
+        }
+    }
+
+    function updateFreq(hz) {
+        document.getElementById('hz-disp').innerText = hz;
+        send(`start(${hz})`);
+    }
+</script>
+
+</body>
+</html>
