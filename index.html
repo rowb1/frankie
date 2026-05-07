@@ -12,233 +12,157 @@
     <script src="https://www.puck-js.com/puck.js"></script>
     <style>
         :root {
-            --bg-overlay: rgba(28, 25, 23, 0.85); /* Deep charcoal/brown overlay */
+            --bg-overlay: rgba(28, 25, 23, 0.88);
             --glass: rgba(255, 255, 255, 0.05);
-            --glass-border: rgba(217, 119, 6, 0.2); /* Subtle gold border */
-            --text: #fef3c7; /* Warm cream text */
-            --accent: #f59e0b; /* Gold accent */
-            --cork: #a8a29e; /* Muted cork/stone colour */
-            --glow: #fde68a; /* Warm fairy light glow */
+            --glass-border: rgba(217, 119, 6, 0.25);
+            --text: #fef3c7;
+            --accent: #f59e0b;
+            --cork: #a8a29e;
+            --glow: #fde68a;
         }
         
         body {
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-            margin: 0;
-            padding: 0;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            /* Background uses your jar image [cite: 332] */
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            margin: 0; padding: 0; min-height: 100vh;
+            display: flex; justify-content: center; align-items: center;
             background: linear-gradient(var(--bg-overlay), var(--bg-overlay)), 
                         url('icon.png') no-repeat center center fixed;
-            background-size: cover;
-            color: var(--text);
+            background-size: cover; color: var(--text);
         }
 
         .container {
-            width: 90%;
-            max-width: 380px;
-            background: var(--glass);
-            backdrop-filter: blur(18px);
-            -webkit-backdrop-filter: blur(18px);
-            padding: 30px;
-            border-radius: 35px;
-            border: 1px solid var(--glass-border);
-            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+            width: 90%; max-width: 380px;
+            background: var(--glass); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            padding: 30px; border-radius: 35px; border: 1px solid var(--glass-border);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.6);
         }
 
-        .status-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 35px;
-        }
+        .status-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        .info-row { display: flex; align-items: center; gap: 12px; font-size: 0.85rem; color: var(--accent); font-weight: 600; }
+        .led { width: 10px; height: 10px; border-radius: 50%; background: rgba(255, 255, 255, 0.1); }
+        .led.active { background: var(--glow); box-shadow: 0 0 15px var(--glow); }
 
-        .info-row {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-size: 0.85rem;
-            color: var(--accent);
-            opacity: 0.8;
-            font-weight: 600;
-        }
-
-        .led {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.1);
-            transition: all 0.3s ease;
-        }
-        /* Status follower now uses a warm white/gold glow  */
-        .led.active { 
-            background: var(--glow); 
-            box-shadow: 0 0 15px var(--glow), 0 0 5px white; 
-        }
-
-        h1 { font-size: 1.25rem; font-weight: 300; margin: 0; letter-spacing: 1px; }
+        h1 { font-size: 1.2rem; font-weight: 300; margin: 0; letter-spacing: 1px; }
+        h2 { font-size: 1rem; font-weight: 600; color: var(--accent); text-transform: uppercase; margin-bottom: 20px; }
 
         .btn {
-            width: 100%;
-            padding: 18px;
-            margin: 12px 0;
-            border: none;
-            border-radius: 18px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
+            width: 100%; padding: 18px; margin: 10px 0; border: none; border-radius: 18px;
+            font-size: 0.95rem; font-weight: 600; cursor: pointer; transition: all 0.2s;
+            text-transform: uppercase; letter-spacing: 1px;
         }
+        .btn-connect { background: var(--accent); color: #451a03; }
+        .btn-off { background: transparent; color: var(--cork); border: 1px solid var(--cork); margin-top: 20px; }
 
-        .btn:active { transform: scale(0.97); }
+        .control-panel { background: rgba(0, 0, 0, 0.25); padding: 20px; border-radius: 25px; margin-top: 10px; }
+        .label-row { display: flex; justify-content: space-between; font-size: 0.7rem; color: var(--cork); margin-bottom: 8px; }
 
-        .btn-connect { 
-            background: var(--accent); 
-            color: #451a03; 
-            box-shadow: 0 4px 20px rgba(217, 119, 6, 0.4);
-        }
-
-        .btn-off { 
-            background: transparent; 
-            color: var(--cork); 
-            border: 1px solid var(--cork);
-            margin-top: 25px;
-            font-size: 0.85rem;
-            opacity: 0.7;
-        }
-        .btn-off:hover { background: rgba(168, 162, 158, 0.1); opacity: 1; }
-
-        .control-panel {
-            background: rgba(0, 0, 0, 0.25);
-            padding: 22px;
-            border-radius: 25px;
-            margin-top: 15px;
-        }
-
-        .label-row { 
-            display: flex; 
-            justify-content: space-between; 
-            font-size: 0.7rem; 
-            color: var(--cork); 
-            margin-bottom: 10px;
-            letter-spacing: 1px;
-        }
-
-        select.mode-select {
-            background: rgba(255, 255, 255, 0.05);
-            color: var(--text);
-            border: 1px solid var(--glass-border);
-            width: 100%;
-            padding: 14px;
-            border-radius: 14px;
-            margin-bottom: 25px;
-            outline: none;
-            appearance: none;
+        select, input[type=number] {
+            background: rgba(255, 255, 255, 0.05); color: var(--text); border: 1px solid var(--glass-border);
+            width: 100%; padding: 12px; border-radius: 12px; margin-bottom: 15px; outline: none;
         }
 
         input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; }
-        input[type=range]::-webkit-slider-runnable-track {
-            width: 100%;
-            height: 4px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 2px;
-        }
+        input[type=range]::-webkit-slider-runnable-track { height: 4px; background: rgba(255, 255, 255, 0.1); border-radius: 2px; }
         input[type=range]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            height: 22px;
-            width: 22px;
-            border-radius: 50%;
-            background: var(--accent);
-            cursor: pointer;
-            margin-top: -9px;
-            box-shadow: 0 0 15px rgba(245, 158, 11, 0.5);
+            -webkit-appearance: none; height: 22px; width: 22px; border-radius: 50%;
+            background: var(--accent); margin-top: -9px; box-shadow: 0 0 10px rgba(245, 158, 11, 0.5);
         }
+
+        .advanced-link { font-size: 0.7rem; color: var(--cork); margin-top: 25px; text-align: center; cursor: pointer; text-decoration: underline; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div class="status-header">
-        <h1>Frankie's Lamp</h1>
-        <div class="info-row">
-            <span id="batt-lvl">--%</span>
-            <div id="led-indicator" class="led"></div>
+    <div id="main-view">
+        <div class="status-header">
+            <h1>Frankie's Lamp</h1>
+            <div class="info-row"><span id="batt-lvl">--%</span><div id="led-indicator" class="led"></div></div>
+        </div>
+        
+        <button id="conn-btn" class="btn btn-connect" onclick="connect()">Connect Lamp</button>
+        
+        <div id="controls" style="display:none;">
+            <div class="control-panel">
+                <div class="label-row"><span>Mood</span></div>
+                <select id="mode-select" onchange="updateMode()">
+                    <option value="flash">✨ Flashing</option>
+                    <option value="breathe">🌬️ Breathing</option>
+                    <option value="on">🕯️ Always On</option>
+                </select>
+
+                <div id="freq-container">
+                    <div class="label-row"><span>Cycle Speed</span><span style="color:var(--accent)"><span id="hz-disp">1.0</span> Hz</span></div>
+                    <input type="range" id="freq" min="0.1" max="10" step="0.1" value="1.0" oninput="updateFreq(this.value)">
+                </div>
+            </div>
+            <button class="btn btn-off" onclick="send('powerOff()')">turn off</button>
+            <div class="advanced-link" onclick="toggleView(true)">Advanced Parameters</div>
         </div>
     </div>
-    
-    <button id="conn-btn" class="btn btn-connect" onclick="connect()">Wake Magic Lamp</button>
-    
-    <div id="controls" style="display:none;">
+
+    <div id="advanced-view" style="display:none;">
+        <h2>Advanced Parameters</h2>
         <div class="control-panel">
-            <div class="label-row"><span>Lighting Mode</span></div>
-            <select id="mode-select" class="mode-select" onchange="updateMode()">
-                <option value="flash">✨ Flashing</option>
-                <option value="on">🕯️ Always On</option>
-            </select>
+            <div class="label-row"><span>Min Frequency (0.02 - 1.0 Hz)</span></div>
+            <input type="number" id="set-min" step="0.01" value="0.1">
+            
+            <div class="label-row"><span>Max Frequency (1.0 - 20.0 Hz)</span></div>
+            <input type="number" id="set-max" step="0.1" value="10.0">
 
-            <div id="freq-container">
-                <div class="label-row">
-                    <span>Frequency</span>
-                    <span style="color: var(--accent)"><span id="hz-disp">1.0</span> Hz</span>
-                </div>
-                <input type="range" id="freq" min="0.2" max="10" step="0.1" value="1.0" oninput="updateFreq(this.value)">
-            </div>
+            <div class="label-row"><span>Deep Sleep Delay (Min 10s)</span></div>
+            <input type="number" id="set-standby" value="30">
+
+            <div class="label-row"><span>Safety Timer (Min 5 min)</span></div>
+            <input type="number" id="set-sleep" value="30">
         </div>
-
-        <button class="btn btn-off" onclick="send('powerOff()')">turn off</button>
+        <button class="btn btn-connect" onclick="saveSettings()">Apply & Save</button>
+        <button class="btn btn-off" style="border-color:transparent" onclick="toggleView(false)">Cancel</button>
     </div>
 </div>
 
 <script>
     let bt = null;
-    const led = document.getElementById('led-indicator');
-
     function connect() {
         Puck.connect(c => {
-            if (!c) return;
-            bt = c;
-            led.classList.add('active');
+            if (!c) return; bt = c;
+            document.getElementById('led-indicator').classList.add('active');
             document.getElementById('conn-btn').style.display = 'none';
             document.getElementById('controls').style.display = 'block';
-            updateBattery();
-            setInterval(updateBattery, 60000); 
+            updateBattery(); setInterval(updateBattery, 60000);
         });
     }
 
-    function send(cmd) {
-        if (bt) bt.write(cmd + ";\n");
-    }
-
-    function updateBattery() {
-        if (!bt) return;
-        Puck.eval('Puck.getBatteryPercentage()', (p) => {
-            if (p !== null) document.getElementById('batt-lvl').innerText = p + "%";
-        });
-    }
+    function send(cmd) { if (bt) bt.write(cmd + ";\n"); }
+    function updateBattery() { if (bt) Puck.eval('Puck.getBatteryPercentage()', p => { if (p) document.getElementById('batt-lvl').innerText = p+"%"; }); }
 
     function updateMode() {
         const mode = document.getElementById('mode-select').value;
-        const freqCont = document.getElementById('freq-container');
-        if (mode === 'on') {
-            freqCont.style.opacity = "0.2";
-            freqCont.style.pointerEvents = "none";
-            send('allOn()');
-        } else {
-            freqCont.style.opacity = "1";
-            freqCont.style.pointerEvents = "auto";
-            send(`start(${document.getElementById('freq').value})`);
-        }
+        const hz = document.getElementById('freq').value;
+        if (mode === 'on') { document.getElementById('freq-container').style.opacity = "0.2"; send('allOn()'); }
+        else { document.getElementById('freq-container').style.opacity = "1"; mode === 'breathe' ? send(`startBreathing(${hz})`) : send(`start(${hz})`); }
     }
 
-    function updateFreq(hz) {
-        document.getElementById('hz-disp').innerText = hz;
-        send(`start(${hz})`);
+    function updateFreq(hz) { document.getElementById('hz-disp').innerText = hz; updateMode(); }
+
+    function toggleView(showAdv) {
+        document.getElementById('main-view').style.display = showAdv ? 'none' : 'block';
+        document.getElementById('advanced-view').style.display = showAdv ? 'block' : 'none';
+    }
+
+    function saveSettings() {
+        const min = Math.max(0.02, document.getElementById('set-min').value);
+        const max = Math.min(20.0, document.getElementById('set-max').value);
+        const standby = Math.max(10, document.getElementById('set-standby').value);
+        const sleep = Math.max(5, document.getElementById('set-sleep').value);
+
+        send(`cfg.minHz=${min};cfg.maxHz=${max};cfg.standby=${standby};cfg.sleep=${sleep}`);
+        
+        const slider = document.getElementById('freq');
+        slider.min = min; slider.max = max;
+        alert("Settings Applied!");
+        toggleView(false);
     }
 </script>
-
 </body>
 </html>
