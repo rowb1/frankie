@@ -87,7 +87,7 @@
                 <div class="label-row"><span>Mood</span></div>
                 <select id="mode-select" onchange="updateMode()">
                     <option value="flash">✨ Flashing</option>
-                    <option value="breathe">🌬️ Breathing</option>
+                    <option value="breathe" selected>🌬️ Breathing</option>
                     <option value="on">🕯️ Always On</option>
                 </select>
 
@@ -139,11 +139,20 @@
     function updateMode() {
         const mode = document.getElementById('mode-select').value;
         const hz = document.getElementById('freq').value;
-        if (mode === 'on') { document.getElementById('freq-container').style.opacity = "0.2"; send('allOn()'); }
-        else { document.getElementById('freq-container').style.opacity = "1"; mode === 'breathe' ? send(`startBreathing(${hz})`) : send(`start(${hz})`); }
+        if (mode === 'on') { 
+            document.getElementById('freq-container').style.opacity = "0.2"; 
+            send('allOn()'); 
+        } else { 
+            document.getElementById('freq-container').style.opacity = "1"; 
+            // 10x slower period for Breathing means dividing the frequency by 10
+            mode === 'breathe' ? send(`startBreathing(${hz / 10})`) : send(`start(${hz})`); 
+        }
     }
 
-    function updateFreq(hz) { document.getElementById('hz-disp').innerText = hz; updateMode(); }
+    function updateFreq(hz) { 
+        document.getElementById('hz-disp').innerText = hz; 
+        updateMode(); 
+    }
 
     function toggleView(showAdv) {
         document.getElementById('main-view').style.display = showAdv ? 'none' : 'block';
@@ -156,7 +165,7 @@
         const standby = Math.max(10, document.getElementById('set-standby').value);
         const sleep = Math.max(5, document.getElementById('set-sleep').value);
 
-        send(`cfg.minHz=${min};cfg.maxHz=${max};cfg.standby=${standby};cfg.sleep=${sleep}`);
+        send(`cfg.minHz=${min};cfg.standby=${standby};cfg.sleep=${sleep}`);
         
         const slider = document.getElementById('freq');
         slider.min = min; slider.max = max;
