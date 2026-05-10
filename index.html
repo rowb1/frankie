@@ -144,8 +144,8 @@
             send('allOn()'); 
         } else { 
             document.getElementById('freq-container').style.opacity = "1"; 
-            // 10x slower period for Breathing means dividing the frequency by 10
-            mode === 'breathe' ? send(`startBreathing(${hz / 10})`) : send(`start(${hz})`); 
+            // 15x slower period scaling for Breathing mode
+            mode === 'breathe' ? send(`startBreathing(${hz / 15})`) : send(`start(${hz})`); 
         }
     }
 
@@ -165,7 +165,7 @@
         const standby = Math.max(10, document.getElementById('set-standby').value);
         const sleep = Math.max(5, document.getElementById('set-sleep').value);
 
-        send(`cfg.minHz=${min};cfg.standby=${standby};cfg.sleep=${sleep}`);
+        send(`cfg.minHz=${min};cfg.maxHz=${max};cfg.standby=${standby};cfg.sleep=${sleep}`);
         
         const slider = document.getElementById('freq');
         slider.min = min; slider.max = max;
